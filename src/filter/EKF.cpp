@@ -7,10 +7,8 @@ using namespace cv;
 
 //FILTER PREDICTION
 void EKF::Filter_Prediction(){
-
-	//Prediction
-	Prediction(X_k, U_k, P_k, Pn, Q, Rn_explicit, *this, X_pred, P_pred, Z_explicit_pred, Cache_dF_dX, Cache_dH_dX, Cache_dF_dU, S);
-
+    //Prediction
+    Prediction(X_k, U_k, P_k, Pn, Q, Rn_explicit, *this, X_pred, P_pred, Z_explicit_pred, Cache_dF_dX, Cache_dH_dX, Cache_dF_dU, S);
 }
 
 //FILTER UPDATE

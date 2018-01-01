@@ -1,7 +1,7 @@
 #include <opencv/cv.h>
 #include <vector>
 #include "features/featuresSIFT.h"
-#include "opencv2/xfeatures2d.hpp"
+#include <opencv2/xfeatures2d.hpp>
 #include <opencv2/calib3d.hpp>
 #include <iostream>
 
@@ -23,6 +23,9 @@ void featuresSIFT::Apply(const cv::Mat &Img1, const cv::Mat &Img2, std::vector<F
 
     feature_extractor->detect(Img1, kp1, Desc1);
     feature_extractor->detect(Img2, kp2, Desc2);
+    
+    feature_extractor->compute(Img1, kp1, Desc1);
+    feature_extractor->compute(Img2, kp2, Desc2);
 
     std::vector< std::vector< DMatch > > matches;
     std::vector< DMatch > good_matches;
@@ -39,6 +42,7 @@ void featuresSIFT::Apply(const cv::Mat &Img1, const cv::Mat &Img2, std::vector<F
                 good_matches.push_back( matches[i][0]);
             }
         }
+
 
         vector<Point2f> f1_pts, f2_pts;
         for(int i=0; i<good_matches.size(); i++)

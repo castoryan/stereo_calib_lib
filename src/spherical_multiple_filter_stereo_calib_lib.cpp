@@ -1,4 +1,5 @@
 #include "spherical_multiple_filter_stereo_calib_lib.h"
+#include <iostream>
 
 using namespace std;
 using namespace cv;
@@ -156,8 +157,9 @@ void spherical_multiple_filter_stereo_calib::calibrate(const cv::Mat image_left,
         std::vector<Feature> features_right;
 
         get_features.Apply(image_left, image_right, features_left, features_right, max_number_of_features, matching_threshold);
-
+        
         calibrate(features_left, features_right);
+        
     }
 
     previous_left_img = image_left.clone();
@@ -166,6 +168,7 @@ void spherical_multiple_filter_stereo_calib::calibrate(const cv::Mat image_left,
 
 void spherical_multiple_filter_stereo_calib::calibrate(std::vector<Feature> features_left, std::vector<Feature> features_right)
 {
+    std::cout<<"111111"<<std::endl;
     int number_of_features = features_left.size();
     total_number_of_features = number_of_features;
     if(number_of_features >= min_number_of_features)
@@ -184,6 +187,7 @@ void spherical_multiple_filter_stereo_calib::calibrate(std::vector<Feature> feat
         csc_ry.Flag_Cameras_Measurements = false;
         csc_rz.Flag_Cameras_Measurements = false;
     }
+
 
     csc_ty.Filter_Prediction();
     csc_tz.Filter_Prediction();
@@ -209,6 +213,8 @@ void spherical_multiple_filter_stereo_calib::calibrate(std::vector<Feature> feat
     double rz_var = sqrt(csc_rz.P_k.at<double>(0,0));
     double r_var = max(r_var_tmp, rz_var);
 
+    
+    
     if(!filters_converged)
     {
         filters_converged = (csc_ty.filter_converged && csc_tz.filter_converged && csc_rx.filter_converged && csc_ry.filter_converged && csc_rz.filter_converged);
@@ -218,6 +224,7 @@ void spherical_multiple_filter_stereo_calib::calibrate(std::vector<Feature> feat
             use_close_points = false;
     }
 
+    
     if(csc_ty.Flag_Cameras_Measurements)
     {
         filterMeasurementsStruct filter_measurements_struct = defineFiltersMeasurementsVector(ty_pred, tz_pred, rx_pred, ry_pred, rz_pred, features_left, features_right, number_of_features,
@@ -332,16 +339,16 @@ spherical_multiple_filter_stereo_calib_data spherical_multiple_filter_stereo_cal
     return scd;
 }
 
-spherical_multiple_filter_stereo_disparity_data spherical_multiple_filter_stereo_calib::get_disparity_map(cv::Mat left_image, cv::Mat right_image)
+cv::Mat spherical_multiple_filter_stereo_calib::get_disparity_map(cv::Mat left_image, cv::Mat right_image)
 {
-    spherical_multiple_filter_stereo_disparity_data sdd;
+    cv::Mat sdd;
     spherical_multiple_filter_stereo_calib_data scd = get_calibrated_transformations();
 
     sdd = get_disparity_map(left_image, right_image, scd.t_left_cam_to_right_cam, scd.R_left_cam_to_right_cam);
     return sdd;
 }
 
-spherical_multiple_filter_stereo_disparity_data spherical_multiple_filter_stereo_calib::get_disparity_map(cv::Mat left_image, cv::Mat right_image, cv::Mat t_left_cam_to_right_cam, cv::Mat R_left_cam_to_right_cam)
+cv::Mat spherical_multiple_filter_stereo_calib::get_disparity_map(cv::Mat left_image, cv::Mat right_image, cv::Mat t_left_cam_to_right_cam, cv::Mat R_left_cam_to_right_cam)
 {
     spherical_multiple_filter_stereo_disparity_data sdd;
 
@@ -352,27 +359,41 @@ spherical_multiple_filter_stereo_disparity_data spherical_multiple_filter_stereo
     Mat stereo_rectification_map1_left, stereo_rectification_map2_left, stereo_rectification_map1_right, stereo_rectification_map2_right;
     Mat rectified_left_image, rectified_right_image;
 
-	cv::stereoRectify(Kleft, Mat::zeros(5,1,CV_64F), Kright, Mat::zeros(5,1,CV_64F), Size(left_image.cols, left_image.rows), R_left_cam_to_right_cam, t_left_cam_to_right_cam, R1, R2,
+    cv::stereoRectify(Kleft, Mat::zeros(5,1,CV_64F), Kright, Mat::zeros(5,1,CV_64F), Size(left_image.cols, left_image.rows), R_left_cam_to_right_cam, t_left_cam_to_right_cam, R1, R2,
                    stereo_left_calib_mat, stereo_right_calib_mat, Q, CV_CALIB_ZERO_DISPARITY,0, Size(left_image.cols, left_image.rows));
 
-	cv::initUndistortRectifyMap(Kleft, Mat::zeros(5,1,CV_64F), R1, stereo_left_calib_mat, Size(left_image.cols, left_image.rows), CV_16SC2, stereo_rectification_map1_left, stereo_rectification_map2_left);
+    cv::initUndistortRectifyMap(Kleft, Mat::zeros(5,1,CV_64F), R1, stereo_left_calib_mat, Size(left_image.cols, left_image.rows), CV_16SC2, stereo_rectification_map1_left, stereo_rectification_map2_left);
 
-	cv::initUndistortRectifyMap(Kright, Mat::zeros(5,1,CV_64F), R2, stereo_right_calib_mat, Size(right_image.cols, right_image.rows), CV_16SC2, stereo_rectification_map1_right, stereo_rectification_map2_right);
+    cv::initUndistortRectifyMap(Kright, Mat::zeros(5,1,CV_64F), R2, stereo_right_calib_mat, Size(right_image.cols, right_image.rows), CV_16SC2, stereo_rectification_map1_right, stereo_rectification_map2_right);
 
-	cv::remap(left_image, rectified_left_image, stereo_rectification_map1_left, stereo_rectification_map2_left, cv::INTER_LINEAR);
-	cv::remap(right_image, rectified_right_image, stereo_rectification_map1_right, stereo_rectification_map2_right, cv::INTER_LINEAR);
+    cv::remap(left_image, rectified_left_image, stereo_rectification_map1_left, stereo_rectification_map2_left, cv::INTER_LINEAR);
+    cv::remap(right_image, rectified_right_image, stereo_rectification_map1_right, stereo_rectification_map2_right, cv::INTER_LINEAR);
 
-	//Disparity Method
-    Ptr<StereoSGBM> SBM = StereoSGBM::create(0, 80, 3,
-                                              0, 0, 0,
-                                              0,15 );
+    //Disparity Method
+    Ptr<StereoSGBM> SBM = StereoSGBM::create();
+    int sgbmWinSize = 3;
+    int numberOfDisparities = 192;
+    int cn = 1;
+    SBM->setPreFilterCap(63);
+    SBM->setBlockSize(sgbmWinSize);
+    SBM->setP1(8*cn*sgbmWinSize*sgbmWinSize);
+    SBM->setP2(32*cn*sgbmWinSize*sgbmWinSize);
+    SBM->setMinDisparity(0);
+    SBM->setNumDisparities(numberOfDisparities);
+    SBM->setUniquenessRatio(10);
+    SBM->setSpeckleWindowSize(100);
+    SBM->setSpeckleRange(32);
+    SBM->setDisp12MaxDiff(1);
 
 
-
-	Mat Disparity;
+    Mat Disparity;
     SBM->compute(rectified_left_image, rectified_right_image, Disparity);
     Disparity.convertTo(sdd.disparity_values, CV_64F, -1/16.);
-
+    
+    cv::imshow("rect_r",rectified_right_image/2+rectified_left_image/2);
+    //cv::imshow("rect_l",rectified_left_image);
+    cv::waitKey(5);
+/*
     sdd.point_cloud_xyz = Mat::zeros(left_image.rows, left_image.cols, CV_64FC3);
     sdd.disparity_values = Mat::zeros(Disparity.rows,Disparity.cols, CV_64F);
 
@@ -398,13 +419,14 @@ spherical_multiple_filter_stereo_disparity_data spherical_multiple_filter_stereo
 
             //cout << triPoint.at<double>(2,0) << " ";
 		}
-	}//*/
+	}*/
 
 	//cout << endl << endl;;
-    sdd.point_cloud_rgb = rectified_left_image;
+    //sdd.point_cloud_rgb = rectified_left_image;
+    cv::Mat disp;
     Disparity.convertTo(sdd.disparity_image, CV_8U, 255/(SBM->getNumDisparities()*16.));
 
-    return sdd;
+    return sdd.disparity_image;
 }
 
 //functions

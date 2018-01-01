@@ -6,24 +6,24 @@
 class EKFBase{
 	public:
 
-		virtual cv::Mat F(cv::Mat, cv::Mat) const=0;
-		virtual cv::Mat H(cv::Mat, cv::Mat) const=0;
-		virtual cv::Mat G(cv::Mat, cv::Mat) const=0;
-		virtual cv::Mat dF_dX(const cv::Mat &, const cv::Mat &) const;
-		virtual cv::Mat dF_dU(const cv::Mat &, const cv::Mat &) const;
-		virtual cv::Mat dH_dX(const cv::Mat &, const cv::Mat &) const;
-		virtual cv::Mat dG_dX(const cv::Mat &, const cv::Mat &) const;
-		virtual cv::Mat dG_dZ(const cv::Mat &, const cv::Mat &) const;
+        virtual cv::Mat F(cv::Mat, cv::Mat) const=0;
+        virtual cv::Mat H(cv::Mat, cv::Mat) const=0;
+        virtual cv::Mat G(cv::Mat, cv::Mat) const=0;
+        virtual cv::Mat dF_dX(const cv::Mat &, const cv::Mat &) const;
+        virtual cv::Mat dF_dU(const cv::Mat &, const cv::Mat &) const;
+        virtual cv::Mat dH_dX(const cv::Mat &, const cv::Mat &) const;
+        virtual cv::Mat dG_dX(const cv::Mat &, const cv::Mat &) const;
+        virtual cv::Mat dG_dZ(const cv::Mat &, const cv::Mat &) const;
 
-		/*std::vector<double> norm_inn_sq;
-		bool filter_converged;
-		double convergence_threshold;
-		int norm_inn_sq_win;//*/
+        /*std::vector<double> norm_inn_sq;
+        bool filter_converged;
+        double convergence_threshold;
+        int norm_inn_sq_win;//*/
 
-		std::vector<double> mean_inn_vec;
-		bool filter_converged;
-		double convergence_threshold;
-		int mean_inn_samples;
+        std::vector<double> mean_inn_vec;
+        bool filter_converged;
+        double convergence_threshold;
+        int mean_inn_samples;
 };
 
 //Implementation of the Prediction Function

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 SET(PROJECTNAME STEREO_CALIB_LIB)
 PROJECT(${PROJECTNAME})
 
+set(OpenCV_DIR /home/castoryan-home/opencv-3.4.0/build)
 find_package(OpenCV)
 
 file(GLOB CPP_FILES	${PROJECT_SOURCE_DIR}/src/*.cpp
@@ -25,7 +26,7 @@ SOURCE_GROUP("Header Files" FILES ${HEADER_FILES})
 include_directories(${PROJECT_SOURCE_DIR}/include ${OpenCV_INCLUDE_DIRS})
 
 add_library(${PROJECTNAME} ${CPP_FILES} ${HEADER_FILES})
-TARGET_LINK_LIBRARIES(${PROJECTNAME} ${OpenCV_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECTNAME} ${OpenCV_LIBRARIES} ${OpenCV_LIBS})
 
 set(${PROJECTNAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
                                  ${OpenCV_INCLUDE_DIRS}
@@ -36,3 +37,7 @@ set(${PROJECTNAME}_HEADER_FILES ${HEADER_FILES}
 
 set(${PROJECTNAME}_CPP_FILES ${CPP_FILES}
     CACHE INTERNAL "${PROJECT_NAME}: Cpp files" FORCE)
+
+message( ${OpenCV_LIBS} )
+ADD_EXECUTABLE(online_calib online_calib.cpp)
+TARGET_LINK_LIBRARIES(online_calib ${OpenCV_LIBS} ${PROJECTNAME})

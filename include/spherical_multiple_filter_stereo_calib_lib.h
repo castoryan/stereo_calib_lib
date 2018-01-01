@@ -134,8 +134,8 @@ class spherical_multiple_filter_stereo_calib {
 
         bool filtersConverged(){return filters_converged;};
 		spherical_multiple_filter_stereo_calib_data get_calibrated_transformations();
-        spherical_multiple_filter_stereo_disparity_data get_disparity_map(cv::Mat left_image, cv::Mat right_image);
-        spherical_multiple_filter_stereo_disparity_data get_disparity_map(cv::Mat left_image, cv::Mat right_image, cv::Mat t_left_cam_to_right_cam, cv::Mat R_left_cam_to_right_cam);
+        cv::Mat get_disparity_map(cv::Mat left_image, cv::Mat right_image);
+        cv::Mat get_disparity_map(cv::Mat left_image, cv::Mat right_image, cv::Mat t_left_cam_to_right_cam, cv::Mat R_left_cam_to_right_cam);
 
         //functions
         filterMeasurementsStruct defineFiltersMeasurementsVector(double ty_pred, double tz_pred, double rx_pred, double ry_pred, double rz_pred,

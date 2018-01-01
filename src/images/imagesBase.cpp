@@ -1,4 +1,5 @@
 #include "images/imagesBase.h"
+#include <iostream>
 
 ProjectiveCamera::ProjectiveCamera(unsigned int resx, unsigned int resy, double fx, double fy, double cx, double cy, double k1, double k2, double k3, double p1, double p2)
 {
@@ -50,7 +51,11 @@ imagesBase_data imagesBase::rectify(cv::Mat left_image, cv::Mat right_image)
 {
     _imagesBase_data.originalLeftImage = left_image;
     _imagesBase_data.originalRightImage = right_image;
-
+    //std::cout<<rectificationMap1_Left<<std::endl;
+    //std::cout<<rectificationMap2_Left<<std::endl;
+    //std::cout<<rectificationMap1_Right<<std::endl;
+    //std::cout<<rectificationMap2_Right<<std::endl;
+    
     cv::remap(left_image, _imagesBase_data.rectifiedLeftImage, rectificationMap1_Left, rectificationMap2_Left, cv::INTER_LINEAR);
     cv::remap(right_image, _imagesBase_data.rectifiedRightImage, rectificationMap1_Right, rectificationMap2_Right, cv::INTER_LINEAR);
 
